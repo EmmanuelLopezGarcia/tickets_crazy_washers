@@ -30,6 +30,7 @@ class Ticket:
         self.codigo_cliente = None
         self.ticket_en_bd = False
 
+
     def conexion_base_datos_tickets(self, consulta, datos):
 
         try:
