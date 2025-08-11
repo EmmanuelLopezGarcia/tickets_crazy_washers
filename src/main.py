@@ -85,7 +85,8 @@ class Cliente:
         self.correo = None
         self.cliente_en_bd = False
 
-    # El metodo conexion_base_datos conecta con la base de datos para consultas a la tabla clientes
+    # El metodo conexion_base_datos conecta con la base de datos para consultas a la tabla clientes y tiene dos
+    # argumentos que son necesarios para realizar la consulta
     def conexion_base_datos(self, consulta, datos):
 
         # Try catch que maneja el evento de conexion con la BD MySQL
@@ -97,12 +98,12 @@ class Cliente:
             # Imprime en pantalla que hubo conexion exitosa
             print("Conexión exitosa con la base de datos.")
 
-            # La variable cursor contiene el posicionamiento para las consultas a la BC
+            # La variable cursor contiene el posicionamiento para las consultas a la BD
             cursor = conexion.cursor()
 
             # Se ejecuta la sentencia con la propiedad "execute" del objeto cursor pasandole argumentos: consulta y
-            # datos que en este caso contiene la consulta "select" previamente declarada y datos contiene el numero
-            # de telefono previamente asignado
+            # datos que en este caso contiene la consulta previamente declarada y datos contiene el objeto cliente
+            # actual
             cursor.execute(consulta, datos)
 
             # Se asigna a la variable resultados los datos obtenidos despues de aplicar la consulta, en este caso
@@ -152,11 +153,18 @@ class Cliente:
             # Imprime en pantalla el error y que tipo de error
             print(f'Error: {err}')
 
+    # Metodo que agrega a un cliente a la base de datos
+
     def agregarse_bd(self):
 
+        # Se almacena la variable consulta la instruccion que inserta el registro con la informacion a la BD
         consulta = ("INSERT INTO clientes (nombre, telefono, correo) VALUES (%s, %s, %s)")
+
+        # En la variable datos almacenamos los atributos del objeto cliente actual
         datos = (self.nombre_completo, self.telefono, self.correo)
 
+        # Invocamos el metodo que hace la conexion con la base de datos y le pasamos como parametros las dos
+        # variables anteriores
         self.conexion_base_datos(consulta, datos)
 
     # El metodo buscar_cliente_en_bd consulta en la base de datos si existe el registro
@@ -175,15 +183,22 @@ class Cliente:
         # Se invoca al metodo del objeto Cliente conexion_base_datos y se le pasan dos argumentos: consulta y telefono
         self.conexion_base_datos(consulta, telefono)
 
+# Funcion para agregar a un cliente
 
 def agregar_cliente():
 
+    # Instanciamos al objeto cliente
     cliente = Cliente()
+
+    # LLenamos los atributos del cliente
     cliente.nombre_completo = input("Ingrese nombre completo: ")
     cliente.telefono = input("Ingrese número de teléfono: ")
     cliente.correo = input("Ingrese correo: ")
 
+    # Invocamos el metodo para agregar al cliente a la base de datos
     cliente.agregarse_bd()
+
+# Funcion para buscar a un cliente
 
 def buscar_cliente():
 
@@ -213,7 +228,7 @@ def buscar_cliente():
 
             # Se le asigna valor a cada uno de las propiedades del objeto ticket
             ticket.fecha_entrega = input("Ingrese la fecha de entrega (aaaa-mm-dd): ")
-            ticket.fecha_recepcion = input("Ingrese la fecha de entrega (aaaa-mm-dd): ")
+            ticket.fecha_recepcion = input("Ingrese la fecha de recepcion (aaaa-mm-dd): ")
             ticket.nombre_receptor = input("Ingrese el nombre del cliente: ")
             ticket.numero_pares = input("Ingrese el numero de pares: ")
             ticket.numero_gorras = input("Ingrese el numero de gorras: ")
@@ -235,17 +250,22 @@ def buscar_cliente():
             # Se llama al metodo agregar_ticket_db() del objeto ticket
             ticket.agregar_ticket_bd()
 
+    # En caso de que no se encuentre el cliente en la base de datos se activa este else para poderlo agregar
+
     else:
 
+        # Respondemos la pregunta
         agregar = input("¿Deseas agregar al cliente? (s/n): ")
 
+        # Si la respuesta es si (s/S)
         if agregar == "s" or agregar == "S":
 
+            # Invocamos la funcion agregar_cliente
             agregar_cliente()
 
-def main():
+# Aqui inicia el programa (mientras esta en desarrollo)
 
-    # Aqui empieza el programa!
+def main():
 
     # Menu para seleccionar el evento
     print("----Menu----")
@@ -254,14 +274,18 @@ def main():
     # variable opcion contiene el evento
     opcion = input("Elija la opcion que desea ejecutar: ")
 
-    # control de flujo para evento
+    # Evento Buscar cliente
+
     if opcion == "1":
 
         # se llama a la funcion buscar_cliente
         buscar_cliente()
 
+    # Evento Agregar cliente
+
     elif opcion == "2":
 
+        # Se llama a la funcion agregar_cliente
         agregar_cliente()
 
     else:
