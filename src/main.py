@@ -12,8 +12,11 @@ config = {
     'raise_on_warnings': True
 }
 
+# Se crea la clase Ticket
+
 class Ticket:
 
+    # Se definen las propiedades de la clase ticket
     def __init__(self):
         self.fecha_entrega = None
         self.fecha_recepcion = None
@@ -30,20 +33,27 @@ class Ticket:
         self.codigo_cliente = None
         self.ticket_en_bd = False
 
-
+    # Se crea el metodo que realiza la conexion a la base de datos para consultar la tabla tickets
+    # toma dos argumentos, la consulta y los datos
     def conexion_base_datos_tickets(self, consulta, datos):
 
+        # Try catch que maneja el evento de conexion con la BD MySQL
         try:
 
+            # variable conexion_tickets contiene la "conexion" con la BD"
             conexion_tickets = mysql.connector.connect(**config)
 
+            # Imprime en pantalla que hubo conexion exitosa
             print("Conexión exitosa con la base de datos desde tickets")
 
+            # Se crea el objeto cursor para que realice la cunsulta
             cursor_tickets = conexion_tickets.cursor()
             cursor_tickets.execute(consulta, datos)
 
+            # Se obtienen los resultados de la consulta (si es un SELECT)
             resultados_tickets = cursor_tickets.fetchall()
 
+            # Si es una consulta SELECT se despliegan los resultados mediente el siguiente if con for anidados
             if resultados_tickets:
 
                 for k in resultados_tickets:
@@ -52,32 +62,43 @@ class Ticket:
 
                         print(m)
 
+                # Se asigna True a la propiedad ticket_en_bd que sirve para saber si el ticket esta en la BD
                 self.ticket_en_bd = True
 
+            # Se realiza la consulta
             conexion_tickets.commit()
 
+            # Se cierran los objetos cursor y conexion para la BD
             cursor_tickets.close()
             conexion_tickets.close()
             print("Conexión cerrada")
 
+        # Si hay algun error con la BD se muestra el siguiente error
         except mysql.connector.Error as err:
 
             print(f'Error: {err}')
 
+    # Se crea el metodo que agrega un ticket a la BD
     def agregar_ticket_bd(self):
 
+        # Se declara la consulta INSERT para agregar registro a la BD
         consulta = ("INSERT INTO tickets (fecha_entrega, fecha_recepcion, nombre_receptor, numero_pares, numero_gorras\
         , otros, total, a_cuenta, resta, describe_pares, describe_gorras, describe_otros, codigo_cliente) VALUES (%s, \
         %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
 
+        # Se construye la variable datos con la informacion de cada propiedad
         datos = (self.fecha_entrega, self.fecha_recepcion, self.nombre_receptor, self.numero_pares, self.numero_gorras,\
                  self.otros, self.total, self.a_cuenta, self.resta, self.describe_pares, self.describe_gorras,\
                  self.describe_otros, self.codigo_cliente)
 
+        # Se llama al metodo que conecta con la BD para realizar la consulta
         self.conexion_base_datos_tickets(consulta, datos)
+
+# Se declara el objeto Cliente
 
 class Cliente:
 
+    # Se declaran los atributos del objeto cliente
     def __init__(self):
         self.id_cliente = None
         self.nombre_completo = None
