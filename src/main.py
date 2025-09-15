@@ -1,6 +1,7 @@
 # We initiate our tickets program
 from escpos.printer import Usb
 import flet as ft
+from datetime import date
 import mysql.connector
 
 # Conexion con la BD
@@ -58,9 +59,11 @@ class Ticket:
 
                 for k in resultados_tickets:
 
-                    for m in k:
+                    print(k)
 
-                        print(m)
+                    #for m in k:
+
+                        #print(m)
 
                 # Se asigna True a la propiedad ticket_en_bd que sirve para saber si el ticket esta en la BD
                 self.ticket_en_bd = True
@@ -93,6 +96,21 @@ class Ticket:
 
         # Se llama al metodo que conecta con la BD para realizar la consulta
         self.conexion_base_datos_tickets(consulta, datos)
+
+    def buscar_ticket_en_bd(self):
+
+        # La variable consulta contiene la sentencia SQL que selecciona el id_cliente de la tabla clientes filtrando
+        # por el numero de telefono proporcionado
+        consulta = ("SELECT * FROM tickets WHERE nombre_receptor=%s")
+
+        # Imprime en pantalla la consulta
+        # print(consulta) "solo para debugging"
+
+        # Asignacion de la propiedad telefono del objeto cliente creado a la variable telefono
+        nombre_en_ticket = (self.nombre_receptor,)
+
+        # Se invoca al metodo del objeto Cliente conexion_base_datos y se le pasan dos argumentos: consulta y telefono
+        self.conexion_base_datos_tickets(consulta, nombre_en_ticket)
 
 # Se declara el objeto Cliente
 
@@ -248,9 +266,9 @@ def buscar_cliente():
             ticket = Ticket()
 
             # Se le asigna valor a cada uno de las propiedades del objeto ticket
+            ticket.fecha_recepcion = date.today()
             ticket.fecha_entrega = input("Ingrese la fecha de entrega (aaaa-mm-dd): ")
-            ticket.fecha_recepcion = input("Ingrese la fecha de recepcion (aaaa-mm-dd): ")
-            ticket.nombre_receptor = input("Ingrese el nombre del cliente: ")
+            ticket.nombre_receptor = cliente.nombre_completo
             ticket.numero_pares = input("Ingrese el numero de pares: ")
             ticket.numero_gorras = input("Ingrese el numero de gorras: ")
             ticket.otros = input("Ingrese otros articulos (si los hay): ")
@@ -263,7 +281,7 @@ def buscar_cliente():
 
             # Testeo de que se le esta asignando el id_cliente correcto a la propiedad codigo_cliente del objeto ticket
             # para que esten relacionados de manera correcta
-            print(cliente.id_cliente)
+            # print(cliente.id_cliente)
 
             # Se asigna el parametro id_cliente del objeto cliente a la propiedad codigo_cliente del objeto ticket
             ticket.codigo_cliente = cliente.id_cliente
@@ -283,6 +301,17 @@ def buscar_cliente():
 
             # Invocamos la funcion agregar_cliente
             agregar_cliente()
+
+
+def buscar_ticket():
+
+    ticket = Ticket()
+
+    ticket.nombre_receptor = input("Ingrese correctamente el nombre del cliente para buscar sus tickets: ")
+
+    ticket.buscar_ticket_en_bd()
+
+
 
 # Aqui inicia el programa (mientras esta en desarrollo)
 
@@ -311,7 +340,8 @@ def main():
 
     else:
 
-        print("Escogiste buscar ticket")
+        # Se llama a la funcion buscar_cliente
+        buscar_ticket()
 
 main()
 
