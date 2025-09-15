@@ -58,9 +58,11 @@ class Ticket:
 
                 for k in resultados_tickets:
 
-                    for m in k:
+                    print(k)
 
-                        print(m)
+                    #for m in k:
+
+                        #print(m)
 
                 # Se asigna True a la propiedad ticket_en_bd que sirve para saber si el ticket esta en la BD
                 self.ticket_en_bd = True
@@ -93,6 +95,21 @@ class Ticket:
 
         # Se llama al metodo que conecta con la BD para realizar la consulta
         self.conexion_base_datos_tickets(consulta, datos)
+
+    def buscar_ticket_en_bd(self):
+
+        # La variable consulta contiene la sentencia SQL que selecciona el id_cliente de la tabla clientes filtrando
+        # por el numero de telefono proporcionado
+        consulta = ("SELECT * FROM tickets WHERE nombre_receptor = %s")
+
+        # Imprime en pantalla la consulta
+        # print(consulta) "solo para debugging"
+
+        # Asignacion de la propiedad telefono del objeto cliente creado a la variable telefono
+        nombre_del_cliente_en_ticket = (self.nombre_receptor,)
+
+        # Se invoca al metodo del objeto Cliente conexion_base_datos y se le pasan dos argumentos: consulta y telefono
+        self.conexion_base_datos_tickets(consulta, nombre_del_cliente_en_ticket)
 
 # Se declara el objeto Cliente
 
@@ -284,6 +301,17 @@ def buscar_cliente():
             # Invocamos la funcion agregar_cliente
             agregar_cliente()
 
+def buscar_ticket():
+
+    # Se crea un objeto Ticket
+    ticket = Ticket()
+
+    # Se asigna un valor a la propiedad telefono del objeto cliente para buscarlo en la BD
+    ticket.nombre_receptor = input("Ingrese el el nombre del cliente: ")
+
+    # el objeto cliente llama a su metodo buscar_cliente_en_bd()
+    ticket.buscar_ticket_en_bd()
+
 # Aqui inicia el programa (mientras esta en desarrollo)
 
 def main():
@@ -311,7 +339,8 @@ def main():
 
     else:
 
-        print("Escogiste buscar ticket")
+        # Se llama a la funcion buscar_ticket
+        buscar_ticket()
 
 main()
 
