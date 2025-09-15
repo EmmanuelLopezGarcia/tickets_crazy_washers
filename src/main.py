@@ -2,6 +2,8 @@
 from escpos.printer import Usb
 import flet as ft
 from datetime import date
+
+#sdfsdf
 import mysql.connector
 
 # Conexion con la BD
