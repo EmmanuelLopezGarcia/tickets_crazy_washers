@@ -1,6 +1,7 @@
 # We initiate our tickets program
 from escpos.printer import Usb
 import flet as ft
+from datetime import date
 import mysql.connector
 
 # Conexion con la BD
@@ -151,29 +152,44 @@ class Cliente:
             # Se aplica un if que "si hay resultados entramos al control de flujo"
             if resultados:
 
-                # Testeo de los resultados
-                print(resultados)
+                if "SELECT nombre" in consulta:
 
-                # Para cada resultado del set de resultados se aplica un for anidado
-                for i in resultados:
+                    for i in resultados:
+
+                        # Testeo de los resultados
+                        # print(i)
+
+                        # Para
+                        for j in i:
+                            # Testeo de los resultados
+                            # print(j)
+
+                            # Se asigna a la propiedad id_cliente del objeto cliente el valor del resultado
+                            self.nombre_completo = j
+
+                else:
 
                     # Testeo de los resultados
-                    print(i)
+                    # print(resultados)
 
-                    # Para
-                    for j in i:
-
-                        # Testeo de los resultados
-                        print(j)
-
-                        # Se asigna a la propiedad id_cliente del objeto cliente el valor del resultado
-                        self.id_cliente = j
+                    # Para cada resultado del set de resultados se aplica un for anidado
+                    for i in resultados:
 
                         # Testeo de los resultados
-                        print(j)
+                        #print(i)
 
-                # Se asigna a la propiedad cliente_en_bd del objeto cliente el valor True (si existe)
-                self.cliente_en_bd = True
+                        # Para
+                        for j in i:
+
+                            # Testeo de los resultados
+                            #print(j)
+
+                            # Se asigna a la propiedad id_cliente del objeto cliente el valor del resultado
+                            self.id_cliente = j
+
+
+                    # Se asigna a la propiedad cliente_en_bd del objeto cliente el valor True (si existe)
+                    self.cliente_en_bd = True
 
             # Se realiza la consulta erectivamente con el metodo commit() del objeto conexion creado
             conexion.commit()
@@ -221,6 +237,16 @@ class Cliente:
         # Se invoca al metodo del objeto Cliente conexion_base_datos y se le pasan dos argumentos: consulta y telefono
         self.conexion_base_datos(consulta, telefono)
 
+        if self.cliente_en_bd:
+
+            consulta = ("SELECT nombre FROM clientes WHERE id_cliente = %s")
+
+            dato = (self.id_cliente,)
+
+            self.conexion_base_datos(consulta, dato)
+
+
+
 # Funcion para agregar a un cliente
 
 def agregar_cliente():
@@ -265,9 +291,9 @@ def buscar_cliente():
             ticket = Ticket()
 
             # Se le asigna valor a cada uno de las propiedades del objeto ticket
+            ticket.fecha_recepcion = date.today()
             ticket.fecha_entrega = input("Ingrese la fecha de entrega (aaaa-mm-dd): ")
-            ticket.fecha_recepcion = input("Ingrese la fecha de recepcion (aaaa-mm-dd): ")
-            ticket.nombre_receptor = input("Ingrese el nombre del cliente: ")
+            ticket.nombre_receptor = cliente.nombre_completo
             ticket.numero_pares = input("Ingrese el numero de pares: ")
             ticket.numero_gorras = input("Ingrese el numero de gorras: ")
             ticket.otros = input("Ingrese otros articulos (si los hay): ")
@@ -280,7 +306,7 @@ def buscar_cliente():
 
             # Testeo de que se le esta asignando el id_cliente correcto a la propiedad codigo_cliente del objeto ticket
             # para que esten relacionados de manera correcta
-            print(cliente.id_cliente)
+            # print(cliente.id_cliente)
 
             # Se asigna el parametro id_cliente del objeto cliente a la propiedad codigo_cliente del objeto ticket
             ticket.codigo_cliente = cliente.id_cliente
